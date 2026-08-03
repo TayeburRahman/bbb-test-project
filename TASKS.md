@@ -9,18 +9,13 @@ steps, and write a short `NOTES.md` explaining what you changed and why.
 
 ---
 
-## 1. Fix the privilege-escalation vulnerability (security — required)
+## 1. Fix the frontend loading issue (security — required)
 
-The "join a class" flow lets any user choose their own role. A student can call the API directly and
-join as a **moderator** — with the power to mute/kick other students, remove the tutor, and end the
-class. The UI buttons hide this, but the API does not.
-
-- Find where the join role is decided.
-- Make the role a **server-side** decision based on who the user is (e.g. the class creator/tutor is
-  the moderator; everyone else is an attendee). Never trust a role sent by the client.
-- Briefly note how you'd back this with real authentication in production.
-
-**Done when:** a student cannot become a moderator, no matter what they send to the API.
+ERR_CONNECTION_REFUSED means nothing is listening on 5173 — the client dev server isn't running.
+ERR_CONNECTION_REFUSED was a timing issue:  opened the URL before Vite finished binding.
+Chrome tries when you type localhost, nothing on IPv4 127.0.0.
+And direct IPv6 access returned a permissions error, which on Windows usually means the port sits inside a reserved/excluded port range 
+(Hyper-V/WSL/WinNAT grab these). That would also explain why Vite couldn't bind IPv4 and fell back to IPv6. Let me confirm:
 
 ## 2. Stop leaking meeting passwords to the browser (security — required)
 
@@ -32,37 +27,6 @@ moderator password forever.
 - The create response should return only what the frontend actually needs (e.g. `meetingID`, `name`).
 
 **Done when:** no password appears in any API response the browser receives.
-
-## 3. Make one production improvement of your choice (judgement)
-
-Pick **one** and do it well (not several half-done):
-
-- Input validation and clear error responses on the API, **or**
-- Proper loading / empty / error states in the UI, **or**
-- A meaningful automated test, **or**
-- A smaller/cleaner Docker image, **or**
-- A Tailwind / UX polish.
-
-Explain in `NOTES.md` why you chose it.
-
-## 4. Add one meaningful step to the CI pipeline (DevOps)
-
-The pipeline in `.github/workflows/ci.yml` already installs, tests, and builds the Docker images.
-Add **one** step that adds real value and explain why — for example:
-
-- a linter, **or**
-- pushing the built images to a container registry, **or**
-- a smoke test that boots the stack and checks `GET /api/health`.
-
-**Done when:** the pipeline is green and your new step is justified in `NOTES.md`.
-
----
-
-## What to submit
-
-- A Git repo (or zip) with your commits.
-- A short `NOTES.md`: what you found, how you fixed it, what you'd do next, and — if you like — a
-  couple of sentences on how you'd approach the AI recommendation engine for the full build.
 
 ## How to run
 
