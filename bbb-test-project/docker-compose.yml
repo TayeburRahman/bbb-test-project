@@ -1,0 +1,19 @@
+services:
+  server:
+    build: ./server
+    environment:
+      PORT: "3000"
+      # Use the built-in mock so the stack runs without a real BBB server.
+      # Point BBB_URL/BBB_SECRET at a real install and set BBB_MOCK=false to go live.
+      BBB_MOCK: "true"
+      BBB_URL: "http://localhost:3000/bbb-mock/api"
+      BBB_SECRET: "devsecret"
+    ports:
+      - "3000:3000"
+
+  client:
+    build: ./client
+    depends_on:
+      - server
+    ports:
+      - "8080:80"
